@@ -852,5 +852,10 @@ button = tk.Button(
 button.config()
 button.place(relx=0.8, rely=0.92)
 
+#Setting 
+
+
+
+
 
 window.mainloop()
