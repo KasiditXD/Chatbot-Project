@@ -12,12 +12,11 @@ from PIL import ImageTk, Image
 import time
 import re
 import fractions
-
+import enchant
 
 window = tk.Tk()
 window.title("Chatbot")
-# window.attributes("-fullscreen", True)
-window.geometry('1280x720+50+50')
+window.attributes("-fullscreen", True)
 window.configure(background="Blue")
 
 width = 1000
@@ -284,7 +283,7 @@ letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","
 
 def onsending(exceed, lengthstr, img, text, bgframecolor, fgtextcolor, bgtextcolor):
     global Y
-    print("User appear text: " + text[:exceed])
+    
     logframe = Frame(main, bg=bgframecolor)
     logframe.place(x=0, y=Y, width=1000, height=30)
     # initial x60 y10
@@ -425,18 +424,18 @@ def createUserLog(text, y):
 
 def removedoublespace(x):
     sentence = str(x)
-    print(sentence)
-    space_count = 0
-    position = 0
-
-    if "  " in sentence:
-        sentence = sentence.replace("  ", "#")
+    
+    
+  
+        
+    """
     strarray = list(sentence)
     for each in strarray:
         position += 1
         if each == "#":
-            break
-    return sentence[: position - 1]
+            sentence = sentence.replace("#"," ")
+    """
+    return sentence
 
 
 Y = 10
@@ -459,7 +458,34 @@ def evaluate_math_expression(expression):
         return str(result)
     except Exception:
         return None
+def removenonenglish(x):
+    checker = enchant.Dict("en_US")
+    keys = []
+    word = ""
+    arr = list(x+"#")
     
+    sentence = x
+   
+    for each in arr:
+        
+        if each == " " or each == "#":
+            keys.append(word) 
+            word = ""
+        else:
+            word = word + each
+    
+    print(keys)
+    for each in keys:
+        print(each)
+        try:
+            if checker.check(each) == False: 
+                sentence = sentence.replace(each,"")
+        except Exception: 
+            sentence = sentence
+    return sentence
+   
+        
+
 def submit():
     global Y
     global recognize
@@ -543,24 +569,30 @@ def submit():
                             display("Remembered, " + recognition(keys, knowledge))
                         else:
                             if onpendingAnswer == False:
-                                result = str(
-                                    scrape(x.replace(".", "").lower() + "meaning")
-                                ).strip()
-                                print(list(result))
-                                if "   " or " " in result:
-                                    result = result.replace("   ", " ")
+                                result = removenonenglish(scrape(x.replace(".", "").lower() + "meaning")).strip()
+                                
                                 for each in errorscrape:
                                     if each in result:
-                                        result = result.replace(each, ",")
+                                        result = result.replace(each, "")
                                 if "." in result:
                                     result = result.replace(".", "") + "."
                                 if result[0] == " ":
                                     result = result[0:]
+                                if "  " in result:
+                                    result = result.replace("  ", ", ")
+                                elif "   " in result:
+                                    result = result.replace("   ", ", ")
+                                elif "    " in result:
+                                    result = result.replace("    ", ", ")
+                                elif "he" in result:
+                                    result = result.replace("he",", ")
 
+                                 
+                                
                                 display(result.capitalize())
 
 def popupinfo():
-    messagebox.showinfo("showinfo", "This is chatbot, name is Coconutz, version 1.0, created by Kaow.")
+    messagebox.showinfo("showinfo", "This is chatbot, name is CoconutZ, version 1.0, created by Kaow.")
     
 userlog_background = "cyan"
 userlog_foreground = "darkcyan"
@@ -819,11 +851,6 @@ button = tk.Button(
 )
 button.config()
 button.place(relx=0.8, rely=0.92)
-
-#Setting 
-
-
-
 
 
 window.mainloop()
