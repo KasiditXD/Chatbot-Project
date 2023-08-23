@@ -18,7 +18,9 @@ window.title("Chatbot")
 window.attributes("-fullscreen", True)
 window.configure(background="Blue")
 Y = 10
-letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",","!","."," "]
+letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",","!","."," ","",
+           'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+           ]
 userlog_background = "cyan"
 userlog_foreground = "darkcyan"
 botlog_background = "lightgreen"
@@ -93,20 +95,25 @@ def google_search(query):
     try:
         response = get_results(query)
         result = parse_results(response)
-
+        
         if result:
             return result
         else:
-            display("I dont understand the question")
+            
             return None
     except:
-        display("Sorry, I don't have information on this.")
+        return None
 def scrape(x):
         lowercase = x.lower()
         result = google_search(lowercase)
 
         if result:
-            return configletters(result["text"])
+            if configletters(result["text"]):
+                return configletters(result["text"])
+            else:
+                return "Sorry, I don't have information on this."
+        else:
+            return "Sorry, I don't have information on this."
                
 class mechanic:
     def evaluate_math_expression(this,expression):
@@ -330,12 +337,10 @@ class mechanic:
                         strf = ""
                         
 
-                  
-
-                
             if char == ".":
-                print(strf)
+                
                 strf = strf.replace(".", "")
+                print(strf)
                 keys.append(strf)
                 if "s" in strf and this.activate == False:
                     if "is" in keys:
@@ -344,83 +349,54 @@ class mechanic:
                         strf = strf.replace("s", "")
 
                 
-
-            
-                if strf in this.greetings:
-                    this.display(this.generate(this.greetings)+ " "+ this.generate(this.intro))
-                    
-
-                
-                   
-                    
-                        
-
+             
                 if this.activate == True:
                     this.activate = False
                     this.display("The answer is "+str(this.evaluate_math_expression(strf)))
                 else:
                    
-                    
-                    result = scrape(x.replace(".", "").lower() + "meaning").strip()
-                                    
-                    for each in this.errorscrape:
-                            if each in result:
-                                result = result.replace(each, "")
-                    if "." in result:
-                        result = result.replace(".", "") + "."
-                    if result[0] == " ":
-                            result = result[0:]
-                    if "  " in result:
-                        result = result.replace("  ", ", ")
-                    elif "   " in result:
-                        result = result.replace("   ", ", ")
-                    elif "    " in result:
-                        result = result.replace("    ", ", ")
-                    elif "he" in result:
-                        result = result.replace("he",", ")
+                    if strf in this.greetings:
+                        print("yes")
+                        this.display(this.generate(this.greetings)+ " "+ this.generate(this.intro))
+                    else:
+                        result = scrape(x.replace(".", "").lower()).strip()
+                                        
+                        for each in this.errorscrape:
+                                if each in result:
+                                    result = result.replace(each, "")
+                        if "." in result:
+                            result = result.replace(".", "") + "."
+                        if result[0] == " ":
+                                result = result[0:]
+                        if "  " in result:
+                            result = result.replace("  ", ", ")
+                        elif "   " in result:
+                            result = result.replace("   ", ", ")
+                        elif "    " in result:
+                            result = result.replace("    ", ", ")
+                        elif "he" in result:
+                            result = result.replace("he",", ")          
+                        this.display(result.capitalize())
 
-                                    
-                                    
-                    this.display(result.capitalize())
-
-  
 class frame:
     def __init__(this,parent,background,width,height,x,y,isRel=False):
-        this.background = background
-        this.width = width
-        this.height = height
-        this.x = x
-        this.y = y
-        this.isRel = isRel
-        this.parent = parent
-        
-        main = Canvas(this.parent, background=this.background, width=this.width, height=this.height)
+        main = Canvas(parent, background=background, width=width, height=height)
         main.pack(expand=True, fill=BOTH)
-        if this.isRel == True:
-            main.place(relx=this.x, rely=this.y)
+        if isRel == True:
+            main.place(relx=x, rely=y)
         else:
-            main.place(x=this.x, y=this.y)
+            main.place(x=x, y=y)
    
         
 class label:
-    def __init__(this,parent,text,bg,fg,size,x,y,font="Comic Sans MS",isRel=False):
-        this.text = text
-        this.font = font
-        this.size = size
-        this.background = bg
-        this.foreground = fg
-        this.x = x
-        this.y = y
-        this.isRel = isRel
+    def __init__(this,parent,text,background,foreground,size,x,y,font="Comic Sans MS",isRel=False):
+        Title = Label(parent, text=text)
+        Title.configure(font=(font,size), background=background, foreground=foreground)
         
-      
-        Title = Label(parent, text=this.text)
-        Title.configure(font=(this.font, this.size), background=this.background, foreground=this.foreground)
-        
-        if this.isRel == True:
-               Title.place(relx=this.x, rely=this.y)
+        if isRel == True:
+               Title.place(relx=x, rely=y)
         else:
-            Title.place(x=this.x, y=this.y)
+            Title.place(x=x, y=y)
 var = StringVar()
 class entry:
     
@@ -436,22 +412,12 @@ class entry:
         else:
             msgbox.place(x=this.x, y=this.y)
 class textbutton:
-    def __init__(this,location,command,bg,fg,text,x,y,font,isrel=False):
-        this.command = command 
-        this.background = bg
-        this.foreground = fg
-     
-        this.isRel = isrel
-        this.x = x
-        this.y = y
-        this.text = text
-        this.font = font
-        this.location = location
+    def __init__(this,location,command,background,foreground,text,x,y,font,isRel=False):
+        button = Button(location,text=text,command=command,background=background,foreground=foreground,font=font)
+        button.configure(font=font)
+        if isRel == True:button.place(relx=x, rely=y)
+        else:button.place(x=x, y=y)
         
-        button = Button(this.location,text=this.text,command=this.command,background=this.background,foreground=this.foreground,font=this.font)
-        button.configure(font=this.font)
-        if this.isRel == True:button.place(relx=this.x, rely=this.y)
-        else:button.place(x=this.x, y=this.y)
 def userlog_backgroundchanger(x):
         global userlog_background 
         userlog_background = x 
@@ -464,7 +430,7 @@ def userlog_foregroundchanger(x):
 def botlog_foregroundchanger(x):
         global botlog_foreground 
         botlog_foreground = x
-        
+ 
 class setting:
    
     #Background Settings: 
@@ -478,6 +444,20 @@ class setting:
         this.row1colors = ["blue","green","red","black"]
         this.row2colors = ["violet","grey","white","orange"]
         this.row3colors = ["green","violet","cyan","orange"]
+    def select(this,pos,ColorSettingFrame):
+        if (this.columnrow1 == pos):
+            currentbackground = this.row1colors[this.columnrow1]
+            currentbackground2 = this.row2colors[this.columnrow1]
+            currentbackground3 = this.row3colors[this.columnrow1]
+                    
+            colorlabel = label(ColorSettingFrame,currentbackground,this.background,currentbackground,12,this.startPosX+10,this.startPosY-40)
+            colorlabe2 = label(ColorSettingFrame,currentbackground2,this.background,currentbackground2,12,this.startPosX+10,this.startPosY+50)
+            colorbtn1 = textbutton(ColorSettingFrame,lambda: main.configure(background=currentbackground),currentbackground,"black",currentbackground,this.startPosX, this.startPosY,("Comic Sans MS", 12, "bold"))
+            colorbtn2 = textbutton(ColorSettingFrame,lambda: main.configure(background=currentbackground2),currentbackground2,"black",currentbackground2,this.startPosX, this.startPosY+90,("Comic Sans MS", 12, "bold"))
+            colorbtn3 = textbutton(ColorSettingFrame,lambda: userlog_backgroundchanger(currentbackground3),currentbackground3,"black",currentbackground3,this.startPosX, this.startPosY+170,("Comic Sans MS", 12, "bold"))
+            colorbtn4 = textbutton(ColorSettingFrame,lambda: botlog_backgroundchanger(currentbackground3),currentbackground3,"black",currentbackground3,this.startPosX, this.startPosY+230,("Comic Sans MS", 12, "bold"))
+            colorbtn5 = textbutton(ColorSettingFrame,lambda: userlog_foregroundchanger(currentbackground3),currentbackground3,"black",currentbackground3,this.startPosX, this.startPosY+290,("Comic Sans MS", 12, "bold"))
+            colorbtn6 = textbutton(ColorSettingFrame,lambda: botlog_foregroundchanger(currentbackground3),currentbackground3,"black",currentbackground3,this.startPosX, this.startPosY+350,("Comic Sans MS", 12, "bold"))
     def create(this):
         this.startPosX = 240
         this.startPosY = 130
@@ -497,27 +477,18 @@ class setting:
         bot_text = label(ColorSettingFrame,"Bot Text -> ","#2A0061","#FF8686",15,40,480)
         
         while this.columnrow1 <= 3:
-            currentbackground = this.row1colors[this.columnrow1]
-            currentbackground2 = this.row2colors[this.columnrow1]
-            currentbackground3 = this.row3colors[this.columnrow1]
-            colorlabel = label(ColorSettingFrame,currentbackground,this.background,currentbackground,12,this.startPosX+10,this.startPosY-40)
-            colorlabe2 = label(ColorSettingFrame,currentbackground2,this.background,currentbackground2,12,this.startPosX+10,this.startPosY+50)
-            colorbtn1 = textbutton(ColorSettingFrame,lambda: botlog_backgroundchanger(currentbackground),currentbackground3,"black",currentbackground3,this.startPosX, this.startPosY,("Comic Sans MS", 12, "bold"))
-            colorbtn2 = textbutton(ColorSettingFrame,lambda: botlog_backgroundchanger(currentbackground2),currentbackground2,"black",currentbackground2,this.startPosX, this.startPosY+90,("Comic Sans MS", 12, "bold"))
-            colorbtn3 = textbutton(ColorSettingFrame,lambda: botlog_backgroundchanger(currentbackground3),currentbackground3,"black",currentbackground3,this.startPosX, this.startPosY+170,("Comic Sans MS", 12, "bold"))
-            colorbtn4 = textbutton(ColorSettingFrame,lambda: botlog_backgroundchanger(currentbackground3),currentbackground3,"black",currentbackground3,this.startPosX, this.startPosY+230,("Comic Sans MS", 12, "bold"))
-            colorbtn5 = textbutton(ColorSettingFrame,lambda: botlog_backgroundchanger(currentbackground3),currentbackground3,"black",currentbackground3,this.startPosX, this.startPosY+290,("Comic Sans MS", 12, "bold"))
-            colorbtn6 = textbutton(ColorSettingFrame,lambda: botlog_backgroundchanger(currentbackground3),currentbackground3,"black",currentbackground3,this.startPosX, this.startPosY+350,("Comic Sans MS", 12, "bold"))
+            this.select(this.columnrow1,ColorSettingFrame) 
             this.startPosX += 90
             this.columnrow1 += 1
-        
+            
         this.columnrow1 = 0
         this.startPosX = 240
         this.startPosY = 130
-        exitbtn = textbutton(ColorSettingFrame,lambda: ColorSettingFrame.destroy(),"#D30000","white","Exit",540, 0,("Comic Sans MS", 12, "bold"))
+        exitbtn = textbutton(ColorSettingFrame,lambda: ColorSettingFrame.destroy(),"#D30000","white","Exit",545, 0,("Comic Sans MS", 15, "bold"))
    
 def popupinfo():
     messagebox.showinfo("showinfo", "This is chatbot, name is CoconutZ, version 1.0, created by Kaow.")
+
 chatbotmecha = mechanic(10,False)
 settingsystem = setting(600,600)         
 main = Frame(window, background="#261F8C", width=1080, height=670)
@@ -542,9 +513,10 @@ imageinfo = Image.open("img/info.png").resize((100, 100))
 imageinfotk = ImageTk.PhotoImage(imageinfo)
 buttoninfo = Button(window, command=lambda: popupinfo(), image=imageinfotk, border=0, background="purple")
 buttoninfo.place(relx=0.07, rely=0.8)
-# The chatbot title
-
-
-
 buttonsend = textbutton(window,lambda:chatbotmecha.submit(),"#FF7900","white","Submit",0.85, 0.92,("Comic Sans MS", 15, "bold"),True)
+
 window.mainloop()
+
+
+
+
