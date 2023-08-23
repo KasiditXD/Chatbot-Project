@@ -12,7 +12,6 @@ import time
 import re
 import fractions
 import enchant     
-
 window = Tk()
 window.title("Chatbot")
 window.attributes("-fullscreen", True)
@@ -31,22 +30,17 @@ def configletters(x):
             if not (each in letters):
                 sentence = sentence.replace(each, "")
         return sentence
-
 def get_source(url):
     try:
         headers = {"Accept-Language": "en-US,en;q=0.5"}
         session = HTMLSession()
         response = session.get(url, headers=headers)
         return response
-
     except requests.exceptions.RequestException as e:
         print(e)
-
-
 def scrape_google(query):
     query = urllib.parse.quote_plus(query)
     response = get_source("https://www.google.co.uk/search?q=" + query)
-
     links = list(response.html.absolute_links)
     google_app = (
         "https://www.google.",
@@ -57,28 +51,20 @@ def scrape_google(query):
         "https://support.google.",
         "https://maps.google.",
     )
-
     for url in links[:]:
         if url.startswith(google_app):
             links.remove(url)
-
     return links
-
-
 def get_results(query):
     query = urllib.parse.quote_plus(query)
     response = get_source("https://www.google.co.th/search?q=" + query)
     return response
-
-
 def parse_results(response):
     css_identifier_result = ".tF2Cxc"
     css_identifier_title = "h3"
     css_identifier_link = ".yuRUbf a"
     css_identifier_text = ".VwiC3b"
-
     results = response.html.find(css_identifier_result)
-
     if results:
         result = results[0]
         item = {
@@ -89,24 +75,20 @@ def parse_results(response):
         return item
     else:
         return None
-
-
 def google_search(query):
     try:
         response = get_results(query)
         result = parse_results(response)
-        
+        print(result)
         if result:
             return result
         else:
-            
             return None
     except:
         return None
 def scrape(x):
         lowercase = x.lower()
         result = google_search(lowercase)
-
         if result:
             if configletters(result["text"]):
                 return configletters(result["text"])
@@ -114,12 +96,10 @@ def scrape(x):
                 return "Sorry, I don't have information on this."
         else:
             return "Sorry, I don't have information on this."
-               
 class mechanic:
     def evaluate_math_expression(this,expression):
         print("expression: "+expression)
         try:
-        
             expression = re.sub(r"([^\d)])\s*/\s*([^\d(])", r"\1/\2", expression)
             expression = expression.replace("/", "+fractions.Fraction(")
             expression = expression.replace("!", "math.factorial")
@@ -141,17 +121,13 @@ class mechanic:
             keys = []
             word = ""
             arr = list(x+"#")
-            
             sentence = x
-        
             for each in arr:
-                
                 if each == " " or each == "#":
                     keys.append(word) 
                     word = ""
                 else:
                     word = word + each
-            
             print(keys)
             for each in keys:
                 print(each)
@@ -163,45 +139,26 @@ class mechanic:
             return sentence
         except Exception:
             return sentence
-        
     def printtxt(this,text):
         this.createlog(text, Y)
-
-
     def generate(this,arr):
         return arr[random.randrange(0, len(arr))]
-
-
     def join(this,s):
         strx = " ".join(map(str, s))
         return strx
-
     def tryeval(this,str):
         try:
             eval(str)
             return True
         except:
             return False
-
-
     def display(this,msg):
         sentence = msg.capitalize()
         if not ("." in msg):
             sentence = sentence + "."
         this.printtxt("Coconutz: " + sentence)
-
-
     def displayanswer(this,answer):
         this.printtxt("Bot: " + "The answer is " + str(answer))
-
-
-
-
-    
-
-    
-
-
     def __init__(this,Y,activate):
         this.Y = Y
         this.activate = activate
@@ -211,7 +168,6 @@ class mechanic:
         this.errorscrape= ["earn more", "see more", "definition"]
     def onsending(this,exceed, lengthstr, img, text, bgframecolor, fgtextcolor, bgtextcolor):
         global Y
-        
         logframe = Frame(main, bg=bgframecolor)
         logframe.place(x=0, y=Y, width=1000, height=30)
         # initial x60 y10
@@ -222,19 +178,14 @@ class mechanic:
         CoconutImageLabel.place(x=5, y=4)
         label2 = Label(logframe, fg=fgtextcolor, bg=bgtextcolor, text=text[:exceed])
         label2.config(font=("Comic Sans MS", 10))
-
         label2.place(x=40, y=5)
-
         if lengthstr <= exceed:
             Y = Y + 40
         else:
             label2.config(text=text[:exceed] + "-")
             Y = Y + 30
-
-
     def exceedmessagefixing(this,exceed, oncutstr, lengthstr, modifiedstr, bgframecolor, fgtextcolor, bgtextcolor):
         global Y
-
         print("exceed" + str(lengthstr))
         extendpart = modifiedstr[oncutstr:]
         print("At length " + str(oncutstr) + " : " + extendpart)
@@ -248,35 +199,27 @@ class mechanic:
         else:
             label2.config(text=extendpart[:exceed] + "-")
             Y = Y + 30
-
-
     def createlog(this,text, y):
         lengthstr = len(text)
         print("before" + str(lengthstr))
         oncutstr = 0
         modifiedstr = text
         exceed = 130
-        
         foregroundtextcolor = "white"
         global botlog_background
         global botlog_foreground
-        
-
         global Y
         this.onsending(exceed,lengthstr,"img/R.png",text,botlog_background,foregroundtextcolor,botlog_foreground,)
         while lengthstr > exceed:
             lengthstr -= exceed
             oncutstr += exceed
             this.exceedmessagefixing(exceed,oncutstr,lengthstr,modifiedstr,botlog_background,foregroundtextcolor,botlog_foreground,)
-
         if Y > 570:
             print("bot exceed")
             Y = 0
             for each in main.winfo_children():
                 each.destroy()
             this.onsending(exceed,lengthstr,"img/R.png",text,botlog_background,foregroundtextcolor,botlog_foreground,)
-
-
     def createUserLog(this,text, y):
         lengthstr = len(text)
         oncutstr = 0
@@ -284,36 +227,26 @@ class mechanic:
         exceed = 130
         global userlog_background
         global userlog_foreground 
-
         foregroundtextcolor = "white"
-        
         global Y
-
         this.onsending(exceed,lengthstr,"img/person.png",text,userlog_background,foregroundtextcolor,userlog_foreground)
-
         while lengthstr > exceed:
             lengthstr -= exceed
             oncutstr += exceed
             this.exceedmessagefixing(exceed,oncutstr,lengthstr,modifiedstr,userlog_background,foregroundtextcolor,userlog_foreground)
-
         if Y > 530:
             print("user exceed")
             Y = 0
             for each in main.winfo_children():
                 each.destroy()
             this.onsending(exceed,lengthstr,"img/person.png",text,userlog_background,foregroundtextcolor,userlog_foreground)
-
-
     def removedoublespace(this,x):
         sentence = str(x)
-    
-    
     def submit(this):
         Y = this.Y
         x = var.get()
         print(x)
         this.createUserLog("User: " + x, Y)
-
         x += "."
         arr = list(x)
         char_count = 0
@@ -326,19 +259,14 @@ class mechanic:
             find = False
             if char == " ":
                 strf = strf.replace(" ", "")
-               
                 if strf in this.keywords:
                     if this.activate == False:
                         this.activate = True
                         strf = ""
-                        
                     else:
                         keys.append(strf)
                         strf = ""
-                        
-
             if char == ".":
-                
                 strf = strf.replace(".", "")
                 print(strf)
                 keys.append(strf)
@@ -347,20 +275,15 @@ class mechanic:
                         strf = strf
                     else:
                         strf = strf.replace("s", "")
-
-                
-             
                 if this.activate == True:
                     this.activate = False
                     this.display("The answer is "+str(this.evaluate_math_expression(strf)))
                 else:
-                   
                     if strf in this.greetings:
                         print("yes")
                         this.display(this.generate(this.greetings)+ " "+ this.generate(this.intro))
                     else:
                         result = scrape(x.replace(".", "").lower()).strip()
-                                        
                         for each in this.errorscrape:
                                 if each in result:
                                     result = result.replace(each, "")
@@ -373,11 +296,8 @@ class mechanic:
                         elif "   " in result:
                             result = result.replace("   ", ", ")
                         elif "    " in result:
-                            result = result.replace("    ", ", ")
-                        elif "he" in result:
-                            result = result.replace("he",", ")          
+                            result = result.replace("    ", ", ")      
                         this.display(result.capitalize())
-
 class frame:
     def __init__(this,parent,background,width,height,x,y,isRel=False):
         main = Canvas(parent, background=background, width=width, height=height)
@@ -386,23 +306,18 @@ class frame:
             main.place(relx=x, rely=y)
         else:
             main.place(x=x, y=y)
-   
-        
 class label:
     def __init__(this,parent,text,background,foreground,size,x,y,font="Comic Sans MS",isRel=False):
         Title = Label(parent, text=text)
         Title.configure(font=(font,size), background=background, foreground=foreground)
-        
         if isRel == True:
                Title.place(relx=x, rely=y)
         else:
             Title.place(x=x, y=y)
 var = StringVar()
 class entry:
-    
     def __init__(this,width,x,y,isRel):
         this.width = width
-       
         this.x = x
         this.y = y
         this.isRel = isRel
@@ -417,7 +332,6 @@ class textbutton:
         button.configure(font=font)
         if isRel == True:button.place(relx=x, rely=y)
         else:button.place(x=x, y=y)
-        
 def userlog_backgroundchanger(x):
         global userlog_background 
         userlog_background = x 
@@ -430,17 +344,12 @@ def userlog_foregroundchanger(x):
 def botlog_foregroundchanger(x):
         global botlog_foreground 
         botlog_foreground = x
- 
 class setting:
-   
     #Background Settings: 
-        
     def __init__(this,width,height):
         this.width = width
         this.height = height
         this.background = "#090041"
-        
-       
         this.row1colors = ["blue","green","red","black"]
         this.row2colors = ["violet","grey","white","orange"]
         this.row3colors = ["green","violet","cyan","orange"]
@@ -449,7 +358,6 @@ class setting:
             currentbackground = this.row1colors[this.columnrow1]
             currentbackground2 = this.row2colors[this.columnrow1]
             currentbackground3 = this.row3colors[this.columnrow1]
-                    
             colorlabel = label(ColorSettingFrame,currentbackground,this.background,currentbackground,12,this.startPosX+10,this.startPosY-40)
             colorlabe2 = label(ColorSettingFrame,currentbackground2,this.background,currentbackground2,12,this.startPosX+10,this.startPosY+50)
             colorbtn1 = textbutton(ColorSettingFrame,lambda: main.configure(background=currentbackground),currentbackground,"black",currentbackground,this.startPosX, this.startPosY,("Comic Sans MS", 12, "bold"))
@@ -464,31 +372,24 @@ class setting:
         this.columnrow1 = 0
         ColorSettingFrame = Canvas(window, background=this.background, width=600, height=600)
         ColorSettingFrame.place(x=0,y=0)
-
         Setting_title = Label(ColorSettingFrame, text="Setting")
         Setting_title.configure(font=("Comic Sans MS", 40, "bold"), background="#2A0061", foreground="#FF5353")
         Setting_title.place(x=40, y=10)
-        
-       
         bg_label = label(ColorSettingFrame,"Background -> ","#2A0061","#FF8686",15,40,130)
         user_log = label(ColorSettingFrame,"User Log -> ","#2A0061","#FF8686",15,40,300)
         bot_log = label(ColorSettingFrame,"Bot Log -> ","#2A0061","#FF8686",15,40,360)
         user_text = label(ColorSettingFrame,"User Text -> ","#2A0061","#FF8686",15,40,420)
         bot_text = label(ColorSettingFrame,"Bot Text -> ","#2A0061","#FF8686",15,40,480)
-        
         while this.columnrow1 <= 3:
             this.select(this.columnrow1,ColorSettingFrame) 
             this.startPosX += 90
             this.columnrow1 += 1
-            
         this.columnrow1 = 0
         this.startPosX = 240
         this.startPosY = 130
         exitbtn = textbutton(ColorSettingFrame,lambda: ColorSettingFrame.destroy(),"#D30000","white","Exit",545, 0,("Comic Sans MS", 15, "bold"))
-   
 def popupinfo():
     messagebox.showinfo("showinfo", "This is chatbot, name is CoconutZ, version 1.0, created by Kaow.")
-
 chatbotmecha = mechanic(10,False)
 settingsystem = setting(600,600)         
 main = Frame(window, background="#261F8C", width=1080, height=670)
@@ -514,9 +415,4 @@ imageinfotk = ImageTk.PhotoImage(imageinfo)
 buttoninfo = Button(window, command=lambda: popupinfo(), image=imageinfotk, border=0, background="purple")
 buttoninfo.place(relx=0.07, rely=0.8)
 buttonsend = textbutton(window,lambda:chatbotmecha.submit(),"#FF7900","white","Submit",0.85, 0.92,("Comic Sans MS", 15, "bold"),True)
-
 window.mainloop()
-
-
-
-
