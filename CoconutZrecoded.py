@@ -300,20 +300,24 @@ class mechanic:
                         this.display(result.capitalize())
 class frame:
     def __init__(this,parent,background,width,height,x,y,isRel=False):
-        main = Canvas(parent, background=background, width=width, height=height)
-        main.pack(expand=True, fill=BOTH)
+        this.main = Canvas(parent, background=background, width=width, height=height)
+        this.main.pack(expand=True, fill=BOTH)
         if isRel == True:
-            main.place(relx=x, rely=y)
+            this.main.place(relx=x, rely=y)
         else:
-            main.place(x=x, y=y)
+            this.main.place(x=x, y=y)
+    def changebackground(this,bg):
+        this.main.config(background=bg)
 class label:
     def __init__(this,parent,text,background,foreground,size,x,y,font="Comic Sans MS",isRel=False):
-        Title = Label(parent, text=text)
-        Title.configure(font=(font,size), background=background, foreground=foreground)
+        this.Title = Label(parent, text=text)
+        this.Title.configure(font=(font,size), background=background, foreground=foreground)
         if isRel == True:
-               Title.place(relx=x, rely=y)
+               this.Title.place(relx=x, rely=y)
         else:
-            Title.place(x=x, y=y)
+            this.Title.place(x=x, y=y)
+    def changebackground(this,bg): 
+        this.Title.config(background=bg)
 var = StringVar()
 class entry:
     def __init__(this,width,x,y,isRel):
@@ -321,17 +325,20 @@ class entry:
         this.x = x
         this.y = y
         this.isRel = isRel
-        msgbox = Entry(window,textvariable=var,width=this.width,font=("Comic Sans MS", 25, "bold"),background="#00569F",foreground="White")
+        this.msgbox = Entry(window,textvariable=var,width=this.width,font=("Comic Sans MS", 25, "bold"),background="#00569F",foreground="White")
         if this.isRel == True:
-            msgbox.place(relx=this.x, rely=this.y)
+            this.msgbox.place(relx=this.x, rely=this.y)
         else:
-            msgbox.place(x=this.x, y=this.y)
+            this.msgbox.place(x=this.x, y=this.y)
+    def changebackground(this,bg): 
+        this.msgbox.config(background=bg)
+        
 class textbutton:
     def __init__(this,location,command,background,foreground,text,x,y,font,isRel=False):
-        button = Button(location,text=text,command=command,background=background,foreground=foreground,font=font)
-        button.configure(font=font)
-        if isRel == True:button.place(relx=x, rely=y)
-        else:button.place(x=x, y=y)
+        this.button = Button(location,text=text,command=command,background=background,foreground=foreground,font=font)
+        this.button.configure(font=font)
+        if isRel == True:this.button.place(relx=x, rely=y)
+        else:this.button.place(x=x, y=y)
 def userlog_backgroundchanger(x):
         global userlog_background 
         userlog_background = x 
@@ -344,6 +351,38 @@ def userlog_foregroundchanger(x):
 def botlog_foregroundchanger(x):
         global botlog_foreground 
         botlog_foreground = x
+onpressed = False
+def resize(x):
+    global onpressed
+    if onpressed == False:
+        onpressed = True 
+        window.attributes("-fullscreen", False)
+        window.geometry(x)
+    else:
+        onpressed = False
+        window.attributes("-fullscreen", True)
+def changetheme(color):
+    window.config(background=color[0])
+    main.config(background=color[1])
+    frame2.changebackground(color[2])
+    frame3.changebackground(color[3])
+    titlebot.changebackground(color[4])
+    subtitle.changebackground(color[5])
+    entrychat.changebackground(color[6])
+onpressedtheme = False
+def darktheme():
+    global onpressedtheme
+    if onpressedtheme == False:
+        onpressedtheme = True
+        changetheme(["black","black","black","black","black","black","black"])
+    else:
+        onpressedtheme = False
+        changetheme(["blue","#261F8C","#005194","#090041","blue","green","#00569F"])
+def clearalllogs():
+    for each in main.winfo_children():
+        each.destroy()
+        global Y
+        Y = 10
 class setting:
     #Background Settings: 
     def __init__(this,width,height):
@@ -388,8 +427,12 @@ class setting:
         this.startPosX = 240
         this.startPosY = 130
         exitbtn = textbutton(ColorSettingFrame,lambda: ColorSettingFrame.destroy(),"#D30000","white","Exit",545, 0,("Comic Sans MS", 15, "bold"))
+        
 def popupinfo():
-    messagebox.showinfo("showinfo", "This is chatbot, name is CoconutZ, version 1.0, created by Kaow.")
+    messagebox.showinfo("Information", "Welcome to Coconutz, version 1.0 experimental, a chatbot program created by Khonkaenwittayayon Upper Level Computer Science Group. ")
+    messagebox.showinfo("Information", "To use this program, type your message at the input field and press submit once you have finished. The bot will receive your responds and answer you as a paragraph.")
+    
+
 chatbotmecha = mechanic(10,False)
 settingsystem = setting(600,600)         
 main = Frame(window, background="#261F8C", width=1080, height=670)
@@ -400,19 +443,38 @@ frame3 = frame(window,"#090041",1080,225,410,649,False)
 titlebot = label(window,"CHATBOT","blue","white",35,60,35)
 subtitle = label(window,"Experimental version 1.0","green","#FDCFFF",15,55,120,"Courier New bold")
 entrychat = entry(30,0.35,0.92,True)
-framemenu = frame(window,"purple",150,500,0.05,0.25,True)
-labelmenu = label(window,"Menu","indigo","white",25,0.07,0.3,"Helvetica 25 underline",True) 
+framemenu = frame(window,"purple",300,500,0.04,0.25,True)
+labelmenu = label(window,"Menu","indigo","white",30,0.12,0.3,"Helvetica 30 underline",True) 
+#exit button
 image = Image.open("img/exitgui.png").resize((105, 100))
 imagetk = ImageTk.PhotoImage(image)
-buttonexits = Button(window,command=quit,background="purple",border=0,foreground="White",image=imagetk)
+buttonexits = Button(window,command=quit,activebackground="purple", background="purple", border=0,foreground="White",image=imagetk)
 buttonexits.place(relx=0.065, rely=0.4)
+#setting button
 imagesetting = Image.open("img/settinggui.png").resize((100, 100))
 imagesettingtk = ImageTk.PhotoImage(imagesetting)
-buttonsetting = Button(window, command=lambda:settingsystem.create(), image=imagesettingtk, border=0, background="purple")
+buttonsetting = Button(window, command=lambda:settingsystem.create(), image=imagesettingtk, border=0, activebackground="purple", background="purple")
 buttonsetting.place(relx=0.07, rely=0.6)
+#info button
 imageinfo = Image.open("img/info.png").resize((100, 100))
 imageinfotk = ImageTk.PhotoImage(imageinfo)
-buttoninfo = Button(window, command=lambda: popupinfo(), image=imageinfotk, border=0, background="purple")
+buttoninfo = Button(window, command=lambda: popupinfo(), image=imageinfotk, border=0, activebackground="purple", background="purple")
 buttoninfo.place(relx=0.07, rely=0.8)
+#resize button
+imageresize = Image.open("img/resize.png").resize((100, 100))
+imageresizetk = ImageTk.PhotoImage(imageresize)
+buttonresize = Button(window, command=lambda:resize("1000x700"), image=imageresizetk, border=0, activebackground="purple", background="purple")
+buttonresize.place(relx=0.18, rely=0.4)
+#darktheme button
+dark = Image.open("img/darktheme.png").resize((100, 100))
+imagedark = ImageTk.PhotoImage(dark)
+buttondark = Button(window, command=lambda:darktheme(), image=imagedark, border=0, activebackground="purple", background="purple")
+buttondark.place(relx=0.18, rely=0.6)
+#clear button
+clear = Image.open("img/clear.png").resize((100, 100))
+imageclear = ImageTk.PhotoImage(clear)
+buttonclear = Button(window, command=lambda:clearalllogs(), image=imageclear, border=0, activebackground="purple", background="purple")
+buttonclear.place(relx=0.18, rely=0.8)
+
 buttonsend = textbutton(window,lambda:chatbotmecha.submit(),"#FF7900","white","Submit",0.85, 0.92,("Comic Sans MS", 15, "bold"),True)
 window.mainloop()
